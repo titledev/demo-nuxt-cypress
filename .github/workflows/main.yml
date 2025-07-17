@@ -1,18 +1,26 @@
-name: Build Nuxt (after test)
+name: Nuxt Build (After Cypress Test)
 
 on:
   push:
     branches: [main]
 
 jobs:
-  run-tests:
+  # ✅ Step 1: เรียก test จาก repo อื่น
+  run-e2e:
     uses: titledev/demo-cypress/.github/workflows/cypress.yml@main
     secrets: inherit
 
+  # ✅ Step 2: Build ต่อถ้า test ผ่าน
   build:
     runs-on: ubuntu-latest
-    needs: run-tests
+    needs: run-e2e
+
     steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - name: Checkout Nuxt
+        uses: actions/checkout@v3
+
+      - name: Install
+        run: npm install
+
+      - name: Build
+        run: npm run build
